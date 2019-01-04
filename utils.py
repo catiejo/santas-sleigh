@@ -22,20 +22,17 @@ def haversine_distance(start, end):
     distance = 2 * r * numpy.arcsin(inner_portion)
     return distance
 
-def parse_gifts():
+# num_gifts is the number of gifts to get since the file is really big
+def parse_gifts(**kwargs):
     gifts = []
     with open('gifts.csv', mode='r') as csv_file:
         reader = csv.DictReader(csv_file)
-        i = 0
+        i = kwargs.get('num_gifts', float('inf'))
         for row in reader:
-            coord = Point(float(row['Latitude']), float(row['Longitude']))
-            gifts.append(Gift(int(row['GiftId']), coord, float(row['Weight'])))
-            if (i > 100):
+            if (i == 0):
                 return gifts
             else:
-                i += 1
+                i -= 1
+            coord = Point(float(row['Latitude']), float(row['Longitude']))
+            gifts.append(Gift(int(row['GiftId']), coord, float(row['Weight'])))
     return gifts
-
-gifts = parse_gifts()
-print(haversine_distance(gifts[0].pt, gifts[1].pt))
-print(haversine_distance(gifts[0].pt, gifts[0].pt))
